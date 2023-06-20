@@ -1,4 +1,5 @@
 const express = require('express');
+const { uploadUsers } = require('../multer');
 
 const userRouter = express.Router();
 
@@ -13,3 +14,5 @@ userRouter.get('/', (req, res) => {
 userRouter.post('/', uploadUsers.single('file'), (req, res) => {
   return res.redirect('/users?success=true');
 });
+
+module.exports = userRouter;

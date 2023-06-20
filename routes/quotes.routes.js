@@ -1,4 +1,5 @@
 const express = require('express');
+const { uploadQuotes } = require('../multer');
 
 const quoteRouter = express.Router();
 
@@ -13,3 +14,5 @@ quoteRouter.get('/quotes', (req, res) => {
 quoteRouter.post('/quotes', uploadQuotes.single('file'), (req, res) => {
   return res.redirect('/quotes?success=true');
 });
+
+module.exports = quoteRouter;
