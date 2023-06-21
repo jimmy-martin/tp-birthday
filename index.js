@@ -1,5 +1,9 @@
 const express = require('express');
 const cors = require('cors');
+const cron = require('node-cron');
+const dotenv = require('dotenv');
+const sendMails = require('./utils/sendMails');
+dotenv.config();
 
 const app = express();
 const port = 8080;
@@ -8,15 +12,7 @@ const allowedOrigins = ['http://localhost:3000', process.env.FRONTEND_URL];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = 'Accès refusé !';
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
+    origin: allowedOrigins,
   })
 );
 
@@ -30,6 +26,11 @@ app.use('/users', require('./routes/users.routes'));
 app.use('/quotes', require('./routes/quotes.routes'));
 
 app.use('/api/birthdays', require('./routes/birthday.routes'));
+
+cron.schedule('0 8 * * *', async () => {
+  console.log('Envoi des mails du jours ...');
+  await sendMails();
+});
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
